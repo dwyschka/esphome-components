@@ -48,6 +48,14 @@ void TM1650Display::setup() {
 
   this->display();
 }
+void TM1650Display::stop_() {
+  this->dio_pin_->pin_mode(gpio::FLAG_OUTPUT);
+  bit_delay_();
+  this->clk_pin_->pin_mode(gpio::FLAG_INPUT);
+  bit_delay_();
+  this->dio_pin_->pin_mode(gpio::FLAG_INPUT);
+  bit_delay_();
+}
 
 void TM1650Display::display() {
   ESP_LOGVV(TAG, "Display %02X%02X%02X%02X", buffer_[0], buffer_[1], buffer_[2], buffer_[3]);
