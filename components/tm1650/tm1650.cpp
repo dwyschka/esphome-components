@@ -65,7 +65,7 @@ void TM1650Display::stop_() {
 }
 
 void TM1650Display::display() {
-  ESP_LOGVV(TAG, "Display %02X%02X%02X%02X", buffer_[0], buffer_[1], buffer_[2], buffer_[3]);
+  ESP_LOGD(TAG, "Display %02X%02X%02X%02X", buffer_[0], buffer_[1], buffer_[2], buffer_[3]);
 
   // Write DATA CMND
   this->start_();
@@ -127,10 +127,6 @@ void TM1650Display::start_() {
   this->bit_delay_();
 }
 void TM1650Display::update() {
-  uint8_t settings = ((this->intensity_ & 7) << 4)
-    | ((this->mode_ & 1) << 3)
-    | ((this->power_ & (this->intensity_ ? 1 : 0)));
-
   for (uint8_t &i : this->buffer_) {
     i = 0;
   }
