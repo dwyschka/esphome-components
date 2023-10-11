@@ -18,8 +18,8 @@ using tm1650_writer_t = std::function<void(TM1650Display &)>;
 class TM1650Display : public PollingComponent {
  public:
 
-  void set_data_pin(GPIOPin *data_pin) { data_pin_ = data_pin; }
-  void set_clock_pin(GPIOPin *clock_pin) { clock_pin_ = clock_pin; }
+  void set_clk_pin(GPIOPin *pin) { clk_pin_ = pin; }
+  void set_dio_pin(GPIOPin *pin) { dio_pin_ = pin; }
   
   void set_writer(tm1650_writer_t &&writer);
   void set_intensity(uint8_t intensity);
