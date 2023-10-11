@@ -62,14 +62,8 @@ void TM1650Display::display() {
   this->send_byte_(TM1650_CMD_ADDR);
 
   // Write the data bytes
-  if (this->inverted_) {
-    for (int8_t i = this->length_ - 1; i >= 0; i--) {
-      this->send_byte_(this->buffer_[i]);
-    }
-  } else {
-    for (auto b : this->buffer_) {
-      this->send_byte_(b);
-    }
+  for (auto b : this->buffer_) {
+    this->send_byte_(b);
   }
 
   this->stop_();
