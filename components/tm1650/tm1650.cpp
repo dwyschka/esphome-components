@@ -46,18 +46,21 @@ void TM1650Display::setup() {
   ESP_LOGCONFIG(TAG, "Setting up TM1650...");
 
   this->clk_pin_->setup();               // OUTPUT
-  this->clk_pin_->digital_write(false);  // LOW
   this->dio_pin_->setup();               // OUTPUT
-  this->dio_pin_->digital_write(false);  // LOW
+  this->clk_pin_->digital_write(true);  // LOW
+  this->dio_pin_->digital_write(true);  // LOW
+
+  this->send_byte_(TM1650_DSP_CTRL_CMD);
+  this->send_byte_(TM1650_BRT_DEF | TM1650_DSP_8S | TM1650_DSP_ON);
 
   this->display();
 }
 void TM1650Display::stop_() {
-  this->dio_pin_->pin_mode(gpio::FLAG_OUTPUT);
+  this->dio_pin_->digital_write(false);
   bit_delay_();
-  this->clk_pin_->pin_mode(gpio::FLAG_INPUT);
+  this->clk_pin_->digital_write(true);
   bit_delay_();
-  this->dio_pin_->pin_mode(gpio::FLAG_INPUT);
+  this->dio_pin_->digital_write(true);
   bit_delay_();
 }
 
@@ -118,9 +121,9 @@ bool TM1650Display::send_byte_(uint8_t b) {
 
 void TM1650Display::bit_delay_() { delayMicroseconds(100); }
 void TM1650Display::start_() {
-  this->dio_pin_->pin_mode(gpio::FLAG_OUTPUT);
+  this->dio_pin_->digital_write(false);
   this->bit_delay_();
-  this->clk_pin_->pin_mode(gpio::FLAG_OUTPUT);
+  this->clk_pin_->digital_write(false);
   this->bit_delay_();
 }
 void TM1650Display::update() {
