@@ -40,6 +40,11 @@ void TM1650Display::setup() {
 
   auto err = this->write(nullptr, 0);
 
+  this->data_pin_->setup();
+  this->data_pin_->digital_write(false);
+  this->clock_pin_->setup();
+  this->clock_pin_->digital_write(false);
+
   if (err != i2c::ERROR_OK) {
     this->error_code_ = COMMUNICATION_FAILED;
     this->mark_failed();
@@ -47,6 +52,41 @@ void TM1650Display::setup() {
   }
 }
 
+void TM1637Display::display() {
+  ESP_LOGVV(TAG, "Display %02X%02X%02X%02X", buffer_[0], buffer_[1], buffer_[2], buffer_[3]);
+
+  // Write DATA CMND
+  this->start_();
+  this->send_byte_(TM1637_CMD_DATA);
+  this->stop_();
+
+  // Write ADDR CMD + first digit address
+  this->start_();
+  this->send_byte_(TM1637_CMD_ADDR);
+
+  // Write the data bytes
+  if (this->inverted_) {
+    for (int8_t i = this->length_ - 1; i >= 0; i--) {
+      this->send_byte_(this->buffer_[i]);
+    }
+  } else {
+    for (auto b : this->buffer_) {
+      this->send_byte_(b);
+    }
+  }
+
+  this->stop_();
+
+  // Write display CTRL CMND + brightness
+  this->start_();
+  this->send_byte_(TM1637_CMD_CTRL + ((this->intensity_ & 0x7) | 0x08));
+  this->stop_();
+}
+void TM1650Display::bit_delay_() { delayMicroseconds(100); }
+void TM1650Display::start_() {
+  this->dio_pin_->pin_mode(gpio::FLAG_OUTPUT);
+  this->bit_delay_();
+}
 void TM1650Display::update() {
   uint8_t settings = ((this->intensity_ & 7) << 4)
     | ((this->mode_ & 1) << 3)
@@ -59,23 +99,19 @@ void TM1650Display::update() {
   if (this->writer_.has_value()) {
     (*this->writer_)(*this);
   }
+  this->display();
 
-  this->set_i2c_address(TM1650_I2C_DCTL_BASE);
-  this->write(&settings, 1);
-
-  for (uint8_t i = 0; i < this->length_; ++i) {
-    this->set_i2c_address(TM1650_I2C_DISP_BASE + i);
-    this->write(this->buffer_ + i, 1);
-  }
 }
 
 void TM1650Display::dump_config() {
   ESP_LOGCONFIG(TAG, "TM1650:");
-  LOG_I2C_DEVICE(this);
   ESP_LOGCONFIG(TAG, "  Intensity: %d", this->intensity_);
   ESP_LOGCONFIG(TAG, "  Mode: %d", this->mode_);
   ESP_LOGCONFIG(TAG, "  Power: %d", this->power_);
   ESP_LOGCONFIG(TAG, "  Length: %d", this->length_);
+  LOG_PIN("  Data Pin: ", this->data_pin_);
+  LOG_PIN("  Clock Pin: ", this->clock_pin_);
+
   LOG_UPDATE_INTERVAL(this);
 
   if (this->error_code_ == COMMUNICATION_FAILED) {

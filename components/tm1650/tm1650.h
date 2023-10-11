@@ -2,7 +2,6 @@
 
 #include "esphome/core/component.h"
 #include "esphome/core/time.h"
-#include "esphome/components/i2c/i2c.h"
 
 namespace esphome {
 namespace tm1650 {
@@ -16,8 +15,12 @@ class TM1650Display;
 
 using tm1650_writer_t = std::function<void(TM1650Display &)>;
 
-class TM1650Display : public PollingComponent, public i2c::I2CDevice {
+class TM1650Display : public PollingComponent {
  public:
+
+  void set_data_pin(GPIOPin *data_pin) { data_pin_ = data_pin; }
+  void set_clock_pin(GPIOPin *clock_pin) { clock_pin_ = clock_pin; }
+  
   void set_writer(tm1650_writer_t &&writer);
   void set_intensity(uint8_t intensity);
   void set_mode(uint8_t mode);
@@ -49,6 +52,8 @@ class TM1650Display : public PollingComponent, public i2c::I2CDevice {
   uint8_t segment_map_[TM1650_MAX_SEGMENTS] = {0};
 
   enum ErrorCode { NONE = 0, COMMUNICATION_FAILED } error_code_{NONE};
+  GPIOPin *data_pin_;
+  GPIOPin *clock_pin_;
 };
 
 }  // namespace tm1650
