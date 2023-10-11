@@ -161,6 +161,8 @@ uint8_t TM1650Display::print(uint8_t start_pos, const char *str) {
     uint8_t char_data = TM1650_UNKNOWN_CHAR;
 
     if (*str >= ' ' && *str <= '~') {
+        ESP_LOGD(TAG, "PRINT %s", str);
+
       char_data = progmem_read_byte(&TM1650_ASCII_TO_RAW[*str - ' ']);
     }
 
