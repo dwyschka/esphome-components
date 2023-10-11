@@ -44,15 +44,9 @@ void TM1650Display::setup() {
   this->dio_pin_->digital_write(false);
   this->clk_pin_->setup();
   this->clk_pin_->digital_write(false);
-
-  if (err != i2c::ERROR_OK) {
-    this->error_code_ = COMMUNICATION_FAILED;
-    this->mark_failed();
-    return;
-  }
 }
 
-void TM1637Display::display() {
+void TM1650Display::display() {
   ESP_LOGVV(TAG, "Display %02X%02X%02X%02X", buffer_[0], buffer_[1], buffer_[2], buffer_[3]);
 
   // Write DATA CMND
@@ -82,7 +76,7 @@ void TM1637Display::display() {
   this->send_byte_(TM1637_CMD_CTRL + ((this->intensity_ & 0x7) | 0x08));
   this->stop_();
 }
-bool TM1637Display::send_byte_(uint8_t b) {
+bool TM1650Display::send_byte_(uint8_t b) {
   uint8_t data = b;
   for (uint8_t i = 0; i < 8; i++) {
     // CLK low
