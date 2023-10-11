@@ -38,12 +38,12 @@ void TM1650Display::set_segment_map(const char *segment_map) {
 void TM1650Display::setup() {
   ESP_LOGCONFIG(TAG, "Setting up TM1650...");
 
-  auto err = this->write(nullptr, 0);
+  this->clk_pin_->setup();               // OUTPUT
+  this->clk_pin_->digital_write(false);  // LOW
+  this->dio_pin_->setup();               // OUTPUT
+  this->dio_pin_->digital_write(false);  // LOW
 
-  this->dio_pin_->setup();
-  this->dio_pin_->digital_write(false);
-  this->clk_pin_->setup();
-  this->clk_pin_->digital_write(false);
+  this->display();
 }
 
 void TM1650Display::display() {
