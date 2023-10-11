@@ -50,7 +50,7 @@ void TM1650Display::setup() {
   this->clk_pin_->digital_write(true);  // LOW
   this->dio_pin_->digital_write(true);  // LOW
 
-  this->send_byte_(TM1650_DSP_CTRL_CMD);
+  this->send_byte_(TM1650_CMD_CTRL);
   this->send_byte_(TM1650_BRT_DEF | TM1650_DSP_8S | TM1650_DSP_ON);
 
   this->display();
