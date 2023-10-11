@@ -74,43 +74,46 @@ void TM1650Display::display() {
   }
   this->stop_();
 }
+
 bool TM1650Display::send_byte_(uint8_t b) {
   uint8_t data = b;
-  for (uint8_t i = 0; i < 8; i++) {
-    // CLK low
-    this->clk_pin_->pin_mode(gpio::FLAG_OUTPUT);
-    this->bit_delay_();
-    // Set data bit
-    if (data & 0x01) {
-      this->dio_pin_->pin_mode(gpio::FLAG_INPUT);
-    } else {
-      this->dio_pin_->pin_mode(gpio::FLAG_OUTPUT);
+ for (int bit=7; bit >= 0; bit--) {    
+    //The TM1650 expects MSB first
+    if (((data >> bit) & 0x01) == 0x01) {
+      this->dio_pin_->digital_write(true);
     }
+    else {    
+      this->dio_pin_->digital_write(false);
+    }  
+    bit_delay_();
+    this->clk_pin_->digital_write(true);
+    bit_delay_();
+    this->clk_pin_->digital_write(false);
+    bit_delay_();
+  }  
 
-    this->bit_delay_();
-    // CLK high
-    this->clk_pin_->pin_mode(gpio::FLAG_INPUT);
-    this->bit_delay_();
-    data = data >> 1;
-  }
-  // Wait for acknowledge
-  // CLK to zero
-  this->clk_pin_->pin_mode(gpio::FLAG_OUTPUT);
+  this->dio_pin_->digital_write(true);
+  
+  // Prepare DIO to read data
   this->dio_pin_->pin_mode(gpio::FLAG_INPUT);
-  this->bit_delay_();
-  // CLK to high
-  this->clk_pin_->pin_mode(gpio::FLAG_INPUT);
-  this->bit_delay_();
-  uint8_t ack = this->dio_pin_->digital_read();
-  if (ack == 0) {
-    this->dio_pin_->pin_mode(gpio::FLAG_OUTPUT);
-  }
+  bit_delay_();
+  bit_delay_();
+  bit_delay_();
+      
+  // dummy Ack
+  this->clk_pin_->digital_write(true);
+  bit_delay_();
+//  _ack = _dio;  
+  this->clk_pin_->digital_write(false);
+  bit_delay_();
+  
+  // Return DIO to output mode
+  this->dio_pin_->pin_mode(gpio::FLAG_OUTPUT);
+  bit_delay_();
 
-  this->bit_delay_();
-  this->clk_pin_->pin_mode(gpio::FLAG_OUTPUT);
-  this->bit_delay_();
+  this->clk_pin_->digital_write(true);
 
-  return ack;
+  return 1;
 }
 
 void TM1650Display::bit_delay_() { delayMicroseconds(100); }
