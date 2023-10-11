@@ -2,6 +2,8 @@
 
 #include "esphome/core/component.h"
 #include "esphome/core/time.h"
+#include "esphome/core/defines.h"
+#include "esphome/core/hal.h"
 
 namespace esphome {
 namespace tm1650 {
