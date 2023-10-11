@@ -41,10 +41,10 @@ void TM1650Display::set_segment_map(const char *segment_map) {
 void TM1650Display::setup() {
   ESP_LOGCONFIG(TAG, "Setting up TM1650...");
 
-  this->clk_pin_->setup();               // OUTPUT
-  this->clk_pin_->digital_write(false);  // LOW
-  this->dio_pin_->setup();               // OUTPUT
-  this->dio_pin_->digital_write(false);  // LOW
+  this->start_();
+
+  this->send_byte_(0x03);
+  this->send_byte_(0x01);
 
   this->display();
 }
@@ -122,8 +122,13 @@ bool TM1650Display::send_byte_(uint8_t b) {
 
 void TM1650Display::bit_delay_() { delayMicroseconds(100); }
 void TM1650Display::start_() {
-  this->dio_pin_->pin_mode(gpio::FLAG_OUTPUT);
+  this->clk_pin_->setup();               // OUTPUT
+  this->clk_pin_->digital_write(false);  // LOW
   this->bit_delay_();
+  this->dio_pin_->setup();               // OUTPUT
+  this->dio_pin_->digital_write(false);  // LOW
+  this->bit_delay_();
+
 }
 void TM1650Display::update() {
   uint8_t settings = ((this->intensity_ & 7) << 4)
