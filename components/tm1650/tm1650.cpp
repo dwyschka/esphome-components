@@ -54,12 +54,12 @@ void TM1650Display::display() {
 
   // Write DATA CMND
   this->start_();
-  this->send_byte_(TM1637_CMD_DATA);
+  this->send_byte_(TM1650_CMD_DATA);
   this->stop_();
 
   // Write ADDR CMD + first digit address
   this->start_();
-  this->send_byte_(TM1637_CMD_ADDR);
+  this->send_byte_(TM1650_CMD_ADDR);
 
   // Write the data bytes
   if (this->inverted_) {
@@ -76,7 +76,7 @@ void TM1650Display::display() {
 
   // Write display CTRL CMND + brightness
   this->start_();
-  this->send_byte_(TM1637_CMD_CTRL + ((this->intensity_ & 0x7) | 0x08));
+  this->send_byte_(TM1650_CMD_CTRL + ((this->intensity_ & 0x7) | 0x08));
   this->stop_();
 }
 bool TM1650Display::send_byte_(uint8_t b) {
