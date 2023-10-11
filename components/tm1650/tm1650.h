@@ -52,10 +52,13 @@ class TM1650Display : public PollingComponent {
   optional<tm1650_writer_t> writer_{};
   uint8_t buffer_[TM1650_MAX_DIGITS] = {0};
   uint8_t segment_map_[TM1650_MAX_SEGMENTS] = {0};
+  void bit_delay_();
+  void setup_pins_();
+  bool send_byte_(uint8_t b);
 
   enum ErrorCode { NONE = 0, COMMUNICATION_FAILED } error_code_{NONE};
-  GPIOPin *data_pin_;
-  GPIOPin *clock_pin_;
+  GPIOPin *dio_pin_;
+  GPIOPin *clk_pin_;
 };
 
 }  // namespace tm1650
