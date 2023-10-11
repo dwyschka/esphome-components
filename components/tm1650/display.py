@@ -14,7 +14,7 @@ from esphome.const import (
 
 CODEOWNERS = ["@glmnet"]
 
-TM1650_ns = cg.esphome_ns.namespace("TM1650")
+TM1650_ns = cg.esphome_ns.namespace("tm1650")
 TM1650Display = TM1650_ns.class_("TM1650Display", cg.PollingComponent)
 TM1650DisplayRef = TM1650Display.operator("ref")
 
