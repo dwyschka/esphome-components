@@ -40,10 +40,10 @@ void TM1650Display::setup() {
 
   auto err = this->write(nullptr, 0);
 
-  this->data_pin_->setup();
-  this->data_pin_->digital_write(false);
-  this->clock_pin_->setup();
-  this->clock_pin_->digital_write(false);
+  this->dio_pin_->setup();
+  this->dio_pin_->digital_write(false);
+  this->clk_pin_->setup();
+  this->clk_pin_->digital_write(false);
 
   if (err != i2c::ERROR_OK) {
     this->error_code_ = COMMUNICATION_FAILED;
@@ -82,6 +82,45 @@ void TM1637Display::display() {
   this->send_byte_(TM1637_CMD_CTRL + ((this->intensity_ & 0x7) | 0x08));
   this->stop_();
 }
+bool TM1637Display::send_byte_(uint8_t b) {
+  uint8_t data = b;
+  for (uint8_t i = 0; i < 8; i++) {
+    // CLK low
+    this->clk_pin_->pin_mode(gpio::FLAG_OUTPUT);
+    this->bit_delay_();
+    // Set data bit
+    if (data & 0x01) {
+      this->dio_pin_->pin_mode(gpio::FLAG_INPUT);
+    } else {
+      this->dio_pin_->pin_mode(gpio::FLAG_OUTPUT);
+    }
+
+    this->bit_delay_();
+    // CLK high
+    this->clk_pin_->pin_mode(gpio::FLAG_INPUT);
+    this->bit_delay_();
+    data = data >> 1;
+  }
+  // Wait for acknowledge
+  // CLK to zero
+  this->clk_pin_->pin_mode(gpio::FLAG_OUTPUT);
+  this->dio_pin_->pin_mode(gpio::FLAG_INPUT);
+  this->bit_delay_();
+  // CLK to high
+  this->clk_pin_->pin_mode(gpio::FLAG_INPUT);
+  this->bit_delay_();
+  uint8_t ack = this->dio_pin_->digital_read();
+  if (ack == 0) {
+    this->dio_pin_->pin_mode(gpio::FLAG_OUTPUT);
+  }
+
+  this->bit_delay_();
+  this->clk_pin_->pin_mode(gpio::FLAG_OUTPUT);
+  this->bit_delay_();
+
+  return ack;
+}
+
 void TM1650Display::bit_delay_() { delayMicroseconds(100); }
 void TM1650Display::start_() {
   this->dio_pin_->pin_mode(gpio::FLAG_OUTPUT);
@@ -109,8 +148,8 @@ void TM1650Display::dump_config() {
   ESP_LOGCONFIG(TAG, "  Mode: %d", this->mode_);
   ESP_LOGCONFIG(TAG, "  Power: %d", this->power_);
   ESP_LOGCONFIG(TAG, "  Length: %d", this->length_);
-  LOG_PIN("  Data Pin: ", this->data_pin_);
-  LOG_PIN("  Clock Pin: ", this->clock_pin_);
+  LOG_PIN("  Data Pin: ", this->dio_pin_);
+  LOG_PIN("  Clock Pin: ", this->clk_pin_);
 
   LOG_UPDATE_INTERVAL(this);
 
