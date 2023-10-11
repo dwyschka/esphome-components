@@ -15,6 +15,9 @@ const uint8_t TM1650_CMD_ADDR = 0x24;  //!< Display address command
 const uint8_t TM1650_BRT_DEF = 0x40;  //!< Display address command
 const uint8_t TM1650_DSP_8S = 0x08;  //!< Display address command
 const uint8_t TM1650_DSP_ON = 0x01;  //!< Display address command
+const uint8_t TM1650_DATA_WR_CMD = 0x68;  //!< Display address command
+
+const uint8_t TM1650_ADDR_MSK = 0x03;  //!< Display address command
 
 void  TM1650Display::set_writer(tm1650_writer_t &&writer) { this->writer_ = writer; }
 void  TM1650Display::set_intensity(uint8_t intensity)     { this->intensity_ = intensity; }
@@ -69,7 +72,7 @@ void TM1650Display::display() {
 
   // Write DATA CMND
   this->start_();
-  this->send_byte_(TM1650_CMD_DATA);
+  this->send_byte_(TM1650_DATA_WR_CMD | ((0 & TM1650_ADDR_MSK) << 1));
 
   // Write the data bytes
   for (auto b : this->buffer_) {
