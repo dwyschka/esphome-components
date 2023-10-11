@@ -74,11 +74,16 @@ void TM1650Display::display() {
   this->start_();
   this->send_byte_(TM1650_DATA_WR_CMD | ((0 & TM1650_ADDR_MSK) << 1));
 
+
+this->send_byte_(0x32);
+
+this->send_byte_(0x32);
+
   // Write the data bytes
-  for (auto b : this->buffer_) {
-    ESP_LOGD(TAG, "Display %s", b);
-    this->send_byte_(b);
-  }
+ // for (auto b : this->buffer_) {
+  //  ESP_LOGD(TAG, "Display %s", b);
+   // this->send_byte_(b);
+ // }
   this->stop_();
 }
 
