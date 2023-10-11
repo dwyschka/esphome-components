@@ -8,9 +8,13 @@ namespace esphome {
 namespace tm1650 {
 
 static const char *const TAG = "display.tm1650";
-const uint8_t TM1650_CMD_DATA = 0x68;  //!< Display data command
+const uint8_t TM1650_CMD_DATA = 0x48;  //!< Display data command
 const uint8_t TM1650_CMD_CTRL = 0x48;  //!< Display control command
 const uint8_t TM1650_CMD_ADDR = 0x24;  //!< Display address command
+
+const uint8_t TM1650_BRT_DEF = 0x40;  //!< Display address command
+const uint8_t TM1650_DSP_8S = 0x08;  //!< Display address command
+const uint8_t TM1650_DSP_ON = 0x01;  //!< Display address command
 
 void  TM1650Display::set_writer(tm1650_writer_t &&writer) { this->writer_ = writer; }
 void  TM1650Display::set_intensity(uint8_t intensity)     { this->intensity_ = intensity; }
@@ -41,12 +45,13 @@ void TM1650Display::set_segment_map(const char *segment_map) {
 void TM1650Display::setup() {
   ESP_LOGCONFIG(TAG, "Setting up TM1650...");
 
-  this->start_();
+  this->clk_pin_->setup();               // OUTPUT
+  this->clk_pin_->digital_write(true);  // LOW
+  this->dio_pin_->setup();               // OUTPUT
+  this->dio_pin_->digital_write(true);  // LOW
 
-  this->send_byte_(0x03);
-  this->send_byte_(0x01);
-
-  this->display();
+  this->send_byte_(TM1650_CMD_ADDR + (TM1650_BRT_DEF | TM1650_DSP_8S | TM1650_DSP_ON));
+  //this->display();
 }
 void TM1650Display::stop_() {
   this->dio_pin_->pin_mode(gpio::FLAG_OUTPUT);
@@ -122,13 +127,8 @@ bool TM1650Display::send_byte_(uint8_t b) {
 
 void TM1650Display::bit_delay_() { delayMicroseconds(100); }
 void TM1650Display::start_() {
-  this->clk_pin_->setup();               // OUTPUT
-  this->clk_pin_->digital_write(false);  // LOW
+  this->dio_pin_->pin_mode(gpio::FLAG_OUTPUT);
   this->bit_delay_();
-  this->dio_pin_->setup();               // OUTPUT
-  this->dio_pin_->digital_write(false);  // LOW
-  this->bit_delay_();
-
 }
 void TM1650Display::update() {
   uint8_t settings = ((this->intensity_ & 7) << 4)
