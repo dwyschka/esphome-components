@@ -12,7 +12,6 @@ const uint8_t TM1650_CMD_DATA = 0x48;  //!< Display data command
 const uint8_t TM1650_CMD_CTRL = 0x80;  //!< Display control command
 const uint8_t TM1650_CMD_ADDR = 0x24;  //!< Display address command
 
-void  TM1650Display::set_writer(tm1650_writer_t &&writer) { this->writer_ = writer; }
 void  TM1650Display::set_intensity(uint8_t intensity)     { this->intensity_ = intensity; }
 void  TM1650Display::set_mode(uint8_t mode)               { this->mode_ = mode; }
 void  TM1650Display::set_power(bool power)                { this->power_ = power; }
