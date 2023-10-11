@@ -8,7 +8,7 @@ namespace esphome {
 namespace tm1650 {
 
 static const char *const TAG = "display.tm1650";
-const uint8_t TM1650_CMD_DATA = 0x48;  //!< Display data command
+const uint8_t TM1650_CMD_DATA = 0x68;  //!< Display data command
 const uint8_t TM1650_CMD_CTRL = 0x48;  //!< Display control command
 const uint8_t TM1650_CMD_ADDR = 0x24;  //!< Display address command
 
