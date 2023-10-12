@@ -136,13 +136,14 @@ void TM1650Display::start_() {
 }
 
 void TM1650Display::update() {
-  for (uint8_t &i : this->buffer_) {
+/*  for (uint8_t &i : this->buffer_) {
     i = 0;
   }
 
   if (this->writer_.has_value()) {
     (*this->writer_)(*this);
   }
+  */
   this->display();
 
 }
