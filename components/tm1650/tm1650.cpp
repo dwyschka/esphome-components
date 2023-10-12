@@ -50,7 +50,7 @@ void TM1650Display::setup() {
 
   this->start_();
   this->send_byte_(0x48);
-  E
+  
   this->send_byte_((this->intensity_ << 4) | 0x02 | 0x01);
   this->stop_();
 
