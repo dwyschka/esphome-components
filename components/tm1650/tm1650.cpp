@@ -111,7 +111,7 @@ bool TM1650Display::send_byte_(uint8_t b) {
 
   uint8_t ack = this->dio_pin_->digital_read();
 
-      ESP_LOGD(TAG, "Got Ack %d", ack);
+  ESP_LOGD(TAG, "Got Ack %d", ack);
 
   if( ack == 0 ) {
       this->dio_pin_->digital_write(false);
@@ -168,8 +168,6 @@ uint8_t TM1650Display::print(uint8_t start_pos, const char *str) {
     uint8_t char_data = TM1650_UNKNOWN_CHAR;
 
     if (*str >= ' ' && *str <= '~') {
-        ESP_LOGD(TAG, "PRINT %s", str);
-
       char_data = progmem_read_byte(&TM1650_ASCII_TO_RAW[*str - ' ']);
     }
 
@@ -195,9 +193,6 @@ uint8_t TM1650Display::print(uint8_t start_pos, const char *str) {
       ESP_LOGE(TAG, "String is too long for the display!");
       break;
     }
-
-      ESP_LOGW(TAG, "E %s", data);
-
     this->buffer_[pos] = data;
 
     pos++;
