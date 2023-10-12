@@ -48,93 +48,85 @@ void TM1650Display::set_segment_map(const char *segment_map) {
 void TM1650Display::setup() {
   ESP_LOGCONFIG(TAG, "Setting up TM1650...");
 
-  this->clk_pin_->setup();               // OUTPUT
-  this->dio_pin_->setup();               // OUTPUT
-  this->clk_pin_->digital_write(true);  // LOW
-  this->dio_pin_->digital_write(true);  // LOW
-
-  this->send_byte_(TM1650_CMD_ADDR);
-  this->send_byte_(TM1650_BRT_DEF | TM1650_DSP_8S | TM1650_DSP_ON);
+  this->start_();
+  this->send_byte_(0x48);
+  this->send_byte_((5<<4) | 0x08 | 0x01);
+  this->stop_();
 
   this->display();
 }
 void TM1650Display::stop_() {
   this->dio_pin_->digital_write(false);
-  bit_delay_();
-  this->clk_pin_->digital_write(true);
-  bit_delay_();
+  this->clk_pin_->digital_write(false);
+  this->bit_delay_();
+  
   this->dio_pin_->digital_write(true);
-  bit_delay_();
+  this->clk_pin_->digital_write(true);
+  this->bit_delay_();
 }
 
 void TM1650Display::display() {
-  ESP_LOGD(TAG, "Display %02X%02X%02X%02X", this->buffer_[0], this->buffer_[1], this->buffer_[2], this->buffer_[3]);
-
   // Write DATA CMND
   this->start_();
-  this->send_byte_(0x34 | ((0 & TM1650_ADDR_MSK) << 1));
+  this->send_byte_(0x68 | (0 << 1 ));
+  this->send_byte_(0x32);
 
+  this->send_byte_(0x68 | (1 << 1 ));
+  this->send_byte_(0x32);
 
-this->send_byte_(0x32);
-
-this->send_byte_(0x32);
-
-  // Write the data bytes
- // for (auto b : this->buffer_) {
-  //  ESP_LOGD(TAG, "Display %s", b);
-   // this->send_byte_(b);
- // }
   this->stop_();
 }
 
 bool TM1650Display::send_byte_(uint8_t b) {
   uint8_t data = b;
- for (int bit=7; bit >= 0; bit--) {    
-    //The TM1650 expects MSB first
-    if (((data >> bit) & 0x01) == 0x01) {
-      this->dio_pin_->digital_write(true);
-    }
-    else {    
-      this->dio_pin_->digital_write(false);
-    }  
-    bit_delay_();
-    this->clk_pin_->digital_write(true);
-    bit_delay_();
-    this->clk_pin_->digital_write(false);
-    bit_delay_();
-  }  
+  for(int i = 0; i < 8; i++) {
+      this->clk_pin_->digital_write(false);
+      this->bit_delay_();
 
-  this->dio_pin_->digital_write(true);
-  
-  // Prepare DIO to read data
-  this->dio_pin_->pin_mode(gpio::FLAG_INPUT);
-  bit_delay_();
-  bit_delay_();
-  bit_delay_();
-      
-  // dummy Ack
-  this->clk_pin_->digital_write(true);
-  bit_delay_();
-//  _ack = _dio;  
+      this->dio_pin_->digitalWrite(data & 0x80 ? true : false)
+      data = data << 1;
+
+      this->clk_pin_->digital_write(true);
+      this->bit_delay_();
+  }
+
+  this->bit_delay_();
+  this->bit_delay_();
+
   this->clk_pin_->digital_write(false);
-  bit_delay_();
-  
-  // Return DIO to output mode
-  this->dio_pin_->pin_mode(gpio::FLAG_OUTPUT);
-  bit_delay_();
+  this->dio_pin_->pin_mode(0x01)
 
+  this->bit_delay_();
   this->clk_pin_->digital_write(true);
+
+  this->bit_delay_();
+
+  uint8_t ack = this->dio_pin_->digital_read();
+
+      ESP_LOGD(TAG, "Got Ack %d", ack);
+
+  if( ack == 0 ) {
+      this->dio_pin_->digital_write(false);
+  }
+  this->dio_pin_->pin_mode(0x02)
 
   return 1;
 }
 
-void TM1650Display::bit_delay_() { delayMicroseconds(1); }
+void TM1650Display::bit_delay_() { 
+  delayMicroseconds(5); 
+}
+
 void TM1650Display::start_() {
-  this->dio_pin_->digital_write(false);
+  this->dio_pin_->digital_write(true);
+  this->clk_pin_->digital_write(true);
   this->bit_delay_();
+
+  this->dio_pin_->digital_write(false);
   this->clk_pin_->digital_write(false);
   this->bit_delay_();
 }
+
 void TM1650Display::update() {
   for (uint8_t &i : this->buffer_) {
     i = 0;
