@@ -78,13 +78,9 @@ void TM1650Display::display() {
   this->start_();
 
   for (int i = 0; i < this->length_; i++) {
-  this->send_byte_(TM1650_DATA_WR_CMD | (i << 1 ));
-  this->send_byte_(2);
+      this->send_byte_(TM1650_DATA_WR_CMD | (i << 1 ));
+      this->send_byte_(2);
     }
-
-
-  this->send_byte_(TM1650_DATA_WR_CMD | (1 << 1 ));
-  this->send_byte_(0b01101101);
 
   this->stop_();
 }
