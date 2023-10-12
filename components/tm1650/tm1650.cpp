@@ -10,12 +10,12 @@ namespace tm1650 {
 static const char *const TAG = "display.tm1650";
 const uint8_t TM1650_CMD_DATA = 0x48;  //!< Display data command
 const uint8_t TM1650_CMD_CTRL = 0x48;  //!< Display control command
-const uint8_t TM1650_CMD_ADDR = 0x24;  //!< Display address command
+const uint8_t TM1650_CMD_ADDR = 0x48;  //!< Display address command
 
 const uint8_t TM1650_BRT_DEF = 0x40;  //!< Display address command
 const uint8_t TM1650_DSP_8S = 0x08;  //!< Display address command
 const uint8_t TM1650_DSP_ON = 0x01;  //!< Display address command
-const uint8_t TM1650_DATA_WR_CMD = 0x34;  //!< Display address command
+const uint8_t TM1650_DATA_WR_CMD = 0x68;  //!< Display address command
 
 const uint8_t TM1650_ADDR_MSK = 0x03;  //!< Display address command
 
