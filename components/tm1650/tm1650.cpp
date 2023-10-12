@@ -128,7 +128,7 @@ bool TM1650Display::send_byte_(uint8_t b) {
   return 1;
 }
 
-void TM1650Display::bit_delay_() { delayMicroseconds(100); }
+void TM1650Display::bit_delay_() { delayMicroseconds(1); }
 void TM1650Display::start_() {
   this->dio_pin_->digital_write(false);
   this->bit_delay_();
