@@ -50,7 +50,8 @@ void TM1650Display::setup() {
 
   this->start_();
   this->send_byte_(0x48);
-  this->send_byte_((0 << 4) | 0x00 | 0x01);
+  E
+  this->send_byte_((this->intensity_ << 4) | 0x02 | 0x01);
   this->stop_();
 
   this->display();
@@ -150,9 +151,7 @@ void TM1650Display::dump_config() {
 
   LOG_UPDATE_INTERVAL(this);
 
-  if (this->error_code_ == COMMUNICATION_FAILED) {
-    ESP_LOGE(TAG, "Communication with TM1650 failed!");
-  }
+
 }
 
 uint8_t TM1650Display::print(uint8_t start_pos, const char *str) {
