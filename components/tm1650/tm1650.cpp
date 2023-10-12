@@ -83,7 +83,7 @@ bool TM1650Display::send_byte_(uint8_t b) {
       this->clk_pin_->digital_write(false);
       this->bit_delay_();
 
-      this->dio_pin_->digitalWrite(data & 0x80 ? true : false)
+      this->dio_pin_->digital_write(data & 0x80 ? true : false)
       data = data << 1;
 
       this->clk_pin_->digital_write(true);
