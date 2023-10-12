@@ -56,9 +56,9 @@ void TM1650Display::setup() {
   }
 
   this->start_();
-  this->send_byte_(0x48);
+  this->send_byte_(TM1650_CMD_CTRL);
   
-  this->send_byte_((this->intensity_ << 4) | 0x08 | 0x01);
+  this->send_byte_((this->intensity_ << 4) | 0x08 | 0x00);
   this->stop_();
 
   this->display();
@@ -76,10 +76,14 @@ void TM1650Display::stop_() {
 void TM1650Display::display() {
   // Write DATA CMND
   this->start_();
-  this->send_byte_(0x68 | (0 << 1 ));
-  this->send_byte_(0b01101101);
 
-  this->send_byte_(0x68 | (1 << 1 ));
+  for (int i = 0; i < this->length_; i++) {
+  this->send_byte_(TM1650_DATA_WR_CMD | (i << 1 ));
+  this->send_byte_(2);
+    }
+
+
+  this->send_byte_(TM1650_DATA_WR_CMD | (1 << 1 ));
   this->send_byte_(0b01101101);
 
   this->stop_();
