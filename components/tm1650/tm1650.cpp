@@ -48,6 +48,13 @@ void TM1650Display::set_segment_map(const char *segment_map) {
 void TM1650Display::setup() {
   ESP_LOGCONFIG(TAG, "Setting up TM1650...");
 
+  for (int i = 0; i < this->length_; i++) {
+    this->start_();
+    this->send_byte_(TM1650_DATA_WR_CMD | i<<1);						// address command + address (68,6A,6C,6E)
+    this->send_byte_(0);
+    this->stop_();
+  }
+
   this->start_();
   this->send_byte_(0x48);
   
