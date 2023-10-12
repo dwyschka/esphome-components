@@ -94,7 +94,7 @@ bool TM1650Display::send_byte_(uint8_t b) {
   this->bit_delay_();
 
   this->clk_pin_->digital_write(false);
-  this->dio_pin_->pin_mode(gpio::FLAG_INPUT)
+  this->dio_pin_->pin_mode(gpio::FLAG_INPUT);
 
   this->bit_delay_();
   this->clk_pin_->digital_write(true);
@@ -108,7 +108,7 @@ bool TM1650Display::send_byte_(uint8_t b) {
   if( ack == 0 ) {
       this->dio_pin_->digital_write(false);
   }
-  this->dio_pin_->pin_mode(gpio::FLAG_OUTPUT)
+  this->dio_pin_->pin_mode(gpio::FLAG_OUTPUT);
 
   return 1;
 }
