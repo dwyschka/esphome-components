@@ -77,10 +77,10 @@ void TM1650Display::display() {
   // Write DATA CMND
   this->start_();
   this->send_byte_(0x68 | (0 << 1 ));
-  this->send_byte_(0x32);
+  this->send_byte_(0b01101101);
 
   this->send_byte_(0x68 | (1 << 1 ));
-  this->send_byte_(0x32);
+  this->send_byte_(0b01101101);
 
   this->stop_();
 }
