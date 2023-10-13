@@ -197,6 +197,7 @@ uint8_t TM1650Display::print(uint8_t start_pos, const char *str) {
       break;
     }
     this->buffer_[pos] = data;
+    ESP_LOGD(TAG, "Display %02X%02X%02X%02X", data,data,data,data);
 
     pos++;
   }
