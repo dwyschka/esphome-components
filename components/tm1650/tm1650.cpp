@@ -142,8 +142,6 @@ void TM1650Display::update() {
 #ifdef USE_BINARY_SENSOR
 void TM1650Display::loop() {
   uint8_t val = this->get_keys();
-
-  ESP_LOGD("KEYS", "Got Key %d", val);
 }
 
 uint8_t TM1650Display::get_keys() {
@@ -156,6 +154,8 @@ uint8_t TM1650Display::get_keys() {
   if (key_code < 0x44) {
       return 0;
   }
+    ESP_LOGD("KEYS", "Got Key %d", key_code);
+
   if(key_code<=0x47) key_code=key_code-0x44;
 	else if(key_code<=0x4F) key_code=key_code-0x4C+4;
 	else if(key_code<=0x57) key_code=key_code-0x54+8;
