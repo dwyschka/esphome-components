@@ -149,7 +149,7 @@ uint8_t TM1650Display::get_keys() {
   this->start_();
   this->send_byte_(TM1650_CMD_DATA_READ);
 
-  uint8_t key_code = read_byte_();
+  uint8_t key_code = this->read_byte_();
   this->stop_();
 
   if ((key_code & TM1650_SW_MSK) == TM1650_SW_MSK) {
