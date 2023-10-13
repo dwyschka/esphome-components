@@ -28,25 +28,6 @@ void  TM1650Display::set_power(bool power)                { this->power_ = power
 void  TM1650Display::set_length(uint8_t length)           { this->length_ = length; }
 float TM1650Display::get_setup_priority() const           { return setup_priority::PROCESSOR; }
 
-void TM1650Display::set_segment_map(const char *segment_map) {
-  auto map_len = strlen(segment_map);
-
-  if (map_len > TM1650_MAX_SEGMENTS) {
-    map_len = TM1650_MAX_SEGMENTS;
-  }
-
-  for (uint8_t i = 0; i < map_len; ++i) {
-    char seg_map = segment_map[map_len - 1 - i];
-
-    // 7 <- PABCDEFG <- 0
-    if (seg_map <= 'G') {
-      this->segment_map_[i] = 1 << ('G' - seg_map);
-    } else {
-      this->segment_map_[i] = TM1650_DOT_SEGMENT;
-    }
-  }
-}
-
 void TM1650Display::setup() {
   ESP_LOGCONFIG(TAG, "Setting up TM1650...");
 

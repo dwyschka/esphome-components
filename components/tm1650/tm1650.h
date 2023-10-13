@@ -26,7 +26,6 @@ class TM1650Display : public PollingComponent {
   void set_writer(tm1650_writer_t &&writer);
   void set_intensity(uint8_t intensity);
   void set_mode(uint8_t mode);
-  void set_segment_map(const char *segment_map);
   void set_power(bool power);
   void set_length(uint8_t length);
 
@@ -52,7 +51,6 @@ class TM1650Display : public PollingComponent {
   uint8_t length_;
   optional<tm1650_writer_t> writer_{};
   uint8_t buffer_[TM1650_MAX_DIGITS] = {0};
-  uint8_t segment_map_[TM1650_MAX_SEGMENTS] = {0};
   void bit_delay_();
   bool send_byte_(uint8_t b);
   uint8_t read_byte_();
