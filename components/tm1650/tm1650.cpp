@@ -73,7 +73,7 @@ void TM1650Display::stop_() {
 }
 
 void TM1650Display::display() {
-    ESP_LOGD(TAG, "Display %02X%02X%02X%02X", buffer_[0], buffer_[1], buffer_[2], buffer_[3]);
+    ESP_LOGD(TAG, "Display %02X%02X%02X%02X", this->buffer_[0], this->buffer_[1], this->buffer_[2], this->buffer_[3]);
 
   // Write DATA CMND
   this->start_();
