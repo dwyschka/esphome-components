@@ -81,15 +81,8 @@ void TM1650Display::display() {
 
   for (int i = this->length_; i > 0; i--) {
     this->send_byte_(TM1650_DATA_WR_CMD  | i << 1 );						// address command + address (68,6A,6C,6E)
-    this->send_byte_(this->buffer_[i]);
+    this->send_byte_(this->buffer_[i-1]);
   }
-
-/*
-  this->send_byte_(TM1650_DATA_WR_CMD | 1 << 1);						// address command + address (68,6A,6C,6E)
-  this->send_byte_(0b11101111);
-  this->send_byte_(TM1650_DATA_WR_CMD | 2 << 1);						// address command + address (68,6A,6C,6E)
-  this->send_byte_(0b11110111);
-  */
   this->stop_();
 }
 
