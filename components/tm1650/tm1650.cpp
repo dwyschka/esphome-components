@@ -149,12 +149,12 @@ void TM1650Display::update() {
   if (this->writer_.has_value()) {
     (*this->writer_)(*this);
   }
-  
+  /*
   this->start_();
   this->send_byte_(TM1650_CMD_CTRL);
-  this->send_byte_((this->intensity_ << 4) | 0x08 | this->power_ ? TM1650_DSP_ON : TM1650_DSP_OFF);
+  this->send_byte_((this->intensity_ << 4) | TM1650_DSP_8S | this->power_ ? TM1650_DSP_ON : TM1650_DSP_OFF);
   this->stop_();
-
+*/
   this->display();
 
 }
