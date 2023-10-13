@@ -75,14 +75,23 @@ void TM1650Display::stop_() {
 }
 
 void TM1650Display::display() {
+    ESP_LOGD(TAG, "Display %02X%02X%02X%02X", this->buffer_[0], this->buffer_[1], this->buffer_[2], this->buffer_[3]);
+
   // Write DATA CMND
   this->start_();
 
 
-  for (int i = this->length_; i > 0; i--) {
-    this->send_byte_(TM1650_DATA_WR_CMD  | i << 1 );						// address command + address (68,6A,6C,6E)
-    this->send_byte_(this->buffer_[i-1]);
+  for (int i = 0; i < this->length_; i++) {
+    this->send_byte_(TM1650_DATA_WR_CMD  | + (i+1) << 1 );						// address command + address (68,6A,6C,6E)
+    this->send_byte_(this->buffer_[i]);
   }
+
+/*
+  this->send_byte_(TM1650_DATA_WR_CMD | 1 << 1);						// address command + address (68,6A,6C,6E)
+  this->send_byte_(0b11101111);
+  this->send_byte_(TM1650_DATA_WR_CMD | 2 << 1);						// address command + address (68,6A,6C,6E)
+  this->send_byte_(0b11110111);
+  */
   this->stop_();
 }
 
@@ -177,6 +186,7 @@ uint8_t TM1650Display::print(uint8_t start_pos, const char *str) {
     if (*str >= ' ' && *str <= '~') {
       char_data = progmem_read_byte(&TM1650_ASCII_TO_RAW[*str - ' ']);
     }
+    ESP_LOGD(TAG, "Char %s", char_data);
 
     if (char_data == TM1650_UNKNOWN_CHAR) {
       ESP_LOGW(TAG, "Encountered character '%c' with no TM1650 representation while translating string!", *str);
@@ -195,6 +205,7 @@ uint8_t TM1650Display::print(uint8_t start_pos, const char *str) {
       break;
     }
     this->buffer_[pos] = data;
+    ESP_LOGD(TAG, "Display %02X", data);
 
     pos++;
   }
