@@ -42,7 +42,7 @@ async def to_code(config):
     cg.add(var.set_clk_pin(clk))
     dio = await cg.gpio_pin_expression(config[CONF_DIO_PIN])
     cg.add(var.set_dio_pin(dio))
-
+    cg.add(var.set_segment_map(re.sub(r"[^A-G]", "H", config[CONF_SEGMENT_MAP].upper())))
     cg.add(var.set_intensity(config[CONF_INTENSITY]))
     cg.add(var.set_length(config[CONF_LENGTH]))
 
