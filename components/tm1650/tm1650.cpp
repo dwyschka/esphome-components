@@ -80,17 +80,18 @@ void TM1650Display::display() {
   // Write DATA CMND
   this->start_();
 
-/*
-  for (int i = 0; i < this->length_; i++) {
-    this->send_byte_(TM1650_DATA_WR_CMD + i);						// address command + address (68,6A,6C,6E)
-    this->send_byte_(this->buffer_[i] + i);
-  }
-*/
 
+  for (int i = 0; i < this->length_; i++) {
+    this->send_byte_(TM1650_DATA_WR_CMD + (i+1);						// address command + address (68,6A,6C,6E)
+    this->send_byte_(this->buffer_[i] + (i+1));
+  }
+
+/*
   this->send_byte_(TM1650_DATA_WR_CMD | 1 << 1);						// address command + address (68,6A,6C,6E)
   this->send_byte_(0b11101111);
   this->send_byte_(TM1650_DATA_WR_CMD | 2 << 1);						// address command + address (68,6A,6C,6E)
   this->send_byte_(0b11110111);
+  */
   this->stop_();
 }
 
@@ -197,15 +198,11 @@ uint8_t TM1650Display::print(uint8_t start_pos, const char *str) {
       char_data |= TM1650_DOT_SEGMENT;
       str++;
     }
+    uint8_t data = 0;
 
-    char_data = ((char_data & 0x80) ? 0x80 : 0) |  // no move X
-             ((char_data & 0x40) ? 0x1 : 0) |   // A
-             ((char_data & 0x20) ? 0x2 : 0) |   // B
-             ((char_data & 0x10) ? 0x4 : 0) |   // C
-             ((char_data & 0x8) ? 0x8 : 0) |    // D
-             ((char_data & 0x4) ? 0x10 : 0) |   // E
-             ((char_data & 0x2) ? 0x20 : 0) |   // F
-             ((char_data & 0x1) ? 0x40 : 0);    // G
+    for (auto s = 0; s < TM1650_MAX_SEGMENTS; ++s) {
+      data |= (char_data & (1 << s)) ? this->segment_map_[s] : 0;
+    }
 
     // Save to buffer
     if (pos >= this->length_) {
