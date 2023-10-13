@@ -188,9 +188,14 @@ uint8_t TM1650Display::print(uint8_t start_pos, const char *str) {
     // Remap character segments
     uint8_t data = 0;
 
-    for (auto s = 0; s < TM1650_MAX_SEGMENTS; ++s) {
-      data |= (char_data & (1 << s)) ? this->segment_map_[s] : 0;
-    }
+      data = ((data & 0x80) ? 0x80 : 0) |  // no move X
+             ((data & 0x40) ? 0x1 : 0) |   // A
+             ((data & 0x20) ? 0x2 : 0) |   // B
+             ((data & 0x10) ? 0x4 : 0) |   // C
+             ((data & 0x8) ? 0x8 : 0) |    // D
+             ((data & 0x4) ? 0x10 : 0) |   // E
+             ((data & 0x2) ? 0x20 : 0) |   // F
+             ((data & 0x1) ? 0x40 : 0);    // G
 
     // Save to buffer
     if (pos >= this->length_) {
