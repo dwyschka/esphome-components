@@ -10,6 +10,7 @@ from esphome.const import (
     CONF_INTENSITY,
     CONF_LENGTH
 )
+import re
 
 CODEOWNERS = ["@glmnet"]
 
