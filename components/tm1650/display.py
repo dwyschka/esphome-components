@@ -8,11 +8,12 @@ from esphome.const import (
     CONF_ID,
     CONF_LAMBDA,
     CONF_INTENSITY,
-    CONF_LENGTH,
-    CONF_SEGMENT_MAP
+    CONF_LENGTH
 )
 
 CODEOWNERS = ["@glmnet"]
+
+CONF_SEGMENT_MAP = "segment_map"
 
 TM1650_ns = cg.esphome_ns.namespace("tm1650")
 TM1650Display = TM1650_ns.class_("TM1650Display", cg.PollingComponent)
