@@ -177,7 +177,6 @@ void TM1650Display::dump_config() {
 
 uint8_t TM1650Display::print(uint8_t start_pos, const char *str) {
   uint8_t pos = start_pos;
-      ESP_LOGW(TAG, "Encountered character '%c'", *str);
 
   for (; *str != '\0'; str++) {
     uint8_t char_data = TM1650_UNKNOWN_CHAR;
