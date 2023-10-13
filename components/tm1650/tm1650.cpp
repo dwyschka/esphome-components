@@ -209,8 +209,8 @@ uint8_t TM1650Display::print(uint8_t start_pos, const char *str) {
       ESP_LOGE(TAG, "String is too long for the display!");
       break;
     }
-    this->buffer_[pos] = char_data;
-    ESP_LOGD(TAG, "Display %02X", char_data);
+    this->buffer_[pos] = data;
+    ESP_LOGD(TAG, "Display %02X", data);
 
     pos++;
   }
