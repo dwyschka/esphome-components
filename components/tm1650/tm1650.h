@@ -52,7 +52,7 @@ class TM1650Display : public PollingComponent {
 #ifdef USE_BINARY_SENSOR
   void loop() override;
   uint8_t get_keys();
-  void add_tm1650_key(tm1650Key *tm1650_key) { this->tm1650_keys_.push_back(tm1650_key); }
+  void add_tm1650_key(TM1650Key *tm1650_key) { this->tm1650_keys_.push_back(tm1650_key); }
 #endif
 
  protected:
