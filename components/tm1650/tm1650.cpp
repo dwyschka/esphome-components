@@ -79,16 +79,12 @@ void TM1650Display::display() {
 
   // Write DATA CMND
   this->start_();
-  this->send_byte_(TM1650_DATA_WR_CMD);
-  for (auto b : this->buffer_) {
-    this->send_byte_(b);
-  }
-/*
+
   for (int i = 0; i < this->length_; i++) {
     this->send_byte_(TM1650_DATA_WR_CMD + i);						// address command + address (68,6A,6C,6E)
-    this->send_byte_(0x34);
+    this->send_byte_(this->buffer_[i]);
   }
-*/
+
   this->stop_();
 }
 
@@ -175,6 +171,8 @@ uint8_t TM1650Display::print(uint8_t start_pos, const char *str) {
     uint8_t char_data = TM1650_UNKNOWN_CHAR;
 
     if (*str >= ' ' && *str <= '~') {
+        ESP_LOGD(TAG, "Found Char %s", char_data);
+
       char_data = progmem_read_byte(&TM1650_ASCII_TO_RAW[*str - ' ']);
     }
     ESP_LOGD(TAG, "Char %s", char_data);
@@ -189,25 +187,22 @@ uint8_t TM1650Display::print(uint8_t start_pos, const char *str) {
       str++;
     }
 
-    // Remap character segments
-    uint8_t data = 0;
-
-      data = ((data & 0x80) ? 0x80 : 0) |  // no move X
-             ((data & 0x40) ? 0x1 : 0) |   // A
-             ((data & 0x20) ? 0x2 : 0) |   // B
-             ((data & 0x10) ? 0x4 : 0) |   // C
-             ((data & 0x8) ? 0x8 : 0) |    // D
-             ((data & 0x4) ? 0x10 : 0) |   // E
-             ((data & 0x2) ? 0x20 : 0) |   // F
-             ((data & 0x1) ? 0x40 : 0);    // G
+    char_data = ((char_data & 0x80) ? 0x80 : 0) |  // no move X
+             ((char_data & 0x40) ? 0x1 : 0) |   // A
+             ((char_data & 0x20) ? 0x2 : 0) |   // B
+             ((char_data & 0x10) ? 0x4 : 0) |   // C
+             ((char_data & 0x8) ? 0x8 : 0) |    // D
+             ((char_data & 0x4) ? 0x10 : 0) |   // E
+             ((char_data & 0x2) ? 0x20 : 0) |   // F
+             ((char_data & 0x1) ? 0x40 : 0);    // G
 
     // Save to buffer
     if (pos >= this->length_) {
       ESP_LOGE(TAG, "String is too long for the display!");
       break;
     }
-    this->buffer_[pos] = data;
-    ESP_LOGD(TAG, "Display %02X%02X%02X%02X", data,data,data,data);
+    this->buffer_[pos] = char_data;
+    ESP_LOGD(TAG, "Display %02X", char_data);
 
     pos++;
   }
