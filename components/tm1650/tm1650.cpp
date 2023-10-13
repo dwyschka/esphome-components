@@ -28,6 +28,7 @@ void  TM1650Display::set_power(bool power)                { this->power_ = power
 void  TM1650Display::set_length(uint8_t length)           { this->length_ = length; }
 float TM1650Display::get_setup_priority() const           { return setup_priority::PROCESSOR; }
 
+
 void TM1650Display::setup() {
   ESP_LOGCONFIG(TAG, "Setting up TM1650...");
 
@@ -60,9 +61,12 @@ void TM1650Display::display() {
   this->start_();
 
 
+  int counter = this->length_;
+
   for (int i = 0; i < this->length_; i++) {
     this->send_byte_(TM1650_DATA_WR_CMD  | + (i+1) << 1 );						// address command + address (68,6A,6C,6E)
-    this->send_byte_(this->buffer_[i]);
+    this->send_byte_(this->buffer_[counter - 1]);
+    counter--;
   }
 
 /*
