@@ -75,8 +75,6 @@ void TM1650Display::stop_() {
 }
 
 void TM1650Display::display() {
-    ESP_LOGD(TAG, "Display %02X%02X%02X%02X", this->buffer_[0], this->buffer_[1], this->buffer_[2], this->buffer_[3]);
-
   // Write DATA CMND
   this->start_();
 
@@ -167,7 +165,6 @@ void TM1650Display::dump_config() {
   ESP_LOGCONFIG(TAG, "  Mode: %d", this->mode_);
   ESP_LOGCONFIG(TAG, "  Power: %d", this->power_);
   ESP_LOGCONFIG(TAG, "  Length: %d", this->length_);
-  ESP_LOGCONFIG(TAG, "  Segment Map: %s", this->segment_map_);
 
   LOG_PIN("  Data Pin: ", this->dio_pin_);
   LOG_PIN("  Clock Pin: ", this->clk_pin_);
@@ -186,7 +183,6 @@ uint8_t TM1650Display::print(uint8_t start_pos, const char *str) {
     if (*str >= ' ' && *str <= '~') {
       char_data = progmem_read_byte(&TM1650_ASCII_TO_RAW[*str - ' ']);
     }
-    ESP_LOGD(TAG, "Char %s", char_data);
 
     if (char_data == TM1650_UNKNOWN_CHAR) {
       ESP_LOGW(TAG, "Encountered character '%c' with no TM1650 representation while translating string!", *str);
@@ -205,7 +201,6 @@ uint8_t TM1650Display::print(uint8_t start_pos, const char *str) {
       break;
     }
     this->buffer_[pos] = data;
-    ESP_LOGD(TAG, "Display %02X", data);
 
     pos++;
   }

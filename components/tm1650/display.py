@@ -10,11 +10,8 @@ from esphome.const import (
     CONF_INTENSITY,
     CONF_LENGTH
 )
-import re
 
 CODEOWNERS = ["@glmnet"]
-
-CONF_SEGMENT_MAP = "segment_map"
 
 TM1650_ns = cg.esphome_ns.namespace("tm1650")
 TM1650Display = TM1650_ns.class_("TM1650Display", cg.PollingComponent)
@@ -28,10 +25,7 @@ CONFIG_SCHEMA = display.BASIC_DISPLAY_SCHEMA.extend(
         ),
         cv.Optional(CONF_LENGTH, default=6): cv.All(cv.uint8_t, cv.Range(min=1, max=6)),
         cv.Required(CONF_CLK_PIN): pins.gpio_output_pin_schema,
-        cv.Required(CONF_DIO_PIN): pins.gpio_output_pin_schema,
-        cv.Optional(CONF_SEGMENT_MAP, default="PABCDEFG"): cv.All(
-            cv.string, cv.Length(min=8, max=8)
-        ),
+        cv.Required(CONF_DIO_PIN): pins.gpio_output_pin_schema
     }
 ).extend(cv.polling_component_schema("1s"))
 
@@ -45,7 +39,6 @@ async def to_code(config):
     cg.add(var.set_clk_pin(clk))
     dio = await cg.gpio_pin_expression(config[CONF_DIO_PIN])
     cg.add(var.set_dio_pin(dio))
-    cg.add(var.set_segment_map(re.sub(r"[^A-G]", "H", config[CONF_SEGMENT_MAP].upper())))
     cg.add(var.set_intensity(config[CONF_INTENSITY]))
     cg.add(var.set_length(config[CONF_LENGTH]))
 
