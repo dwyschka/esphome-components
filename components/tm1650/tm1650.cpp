@@ -11,6 +11,7 @@ static const char *const TAG = "display.tm1650";
 const uint8_t TM1650_CMD_DATA = 48;  //!< Display data command
 const uint8_t TM1650_CMD_CTRL = 0x48;  //!< Display control command
 const uint8_t TM1650_CMD_ADDR = 0x48;  //!< Display address command
+const uint8_t TM1650_CMD_DATA_READ = 0x49;  //!< Display address command
 
 const uint8_t TM1650_BRT_DEF = 0x40;  //!< Display address command
 const uint8_t TM1650_DSP_8S = 0x08;  //!< Display address command
@@ -34,7 +35,7 @@ void TM1650Display::setup() {
 
   for (int i = 0; i < this->length_; i++) {
     this->start_();
-    this->send_byte_(TM1650_DATA_WR_CMD | i<<1);						// address command + address (68,6A,6C,6E)
+    this->send_byte_(TM1650_DATA_WR_CMD | (i+1)<<1);						// address command + address (68,6A,6C,6E)
     this->send_byte_(0);
     this->stop_();
   }
@@ -134,15 +135,69 @@ void TM1650Display::update() {
   if (this->writer_.has_value()) {
     (*this->writer_)(*this);
   }
-  /*
-  this->start_();
-  this->send_byte_(TM1650_CMD_CTRL);
-  this->send_byte_((this->intensity_ << 4) | TM1650_DSP_8S | this->power_ ? TM1650_DSP_ON : TM1650_DSP_OFF);
-  this->stop_();
-*/
+
   this->display();
 
 }
+#ifdef USE_BINARY_SENSOR
+
+void TM1650Display::loop() {
+  uint8_t val = this->get_keys();
+
+  ESP_LOGD("KEYS", "Got Key %d", val)
+}
+
+uint8_t TM1650Display::get_keys() {
+  this->start_();
+  this->send_byte_(TM1650_CMD_DATA_READ);
+
+  uint8_t key_code = read_byte_();
+  this->stop_();
+
+  if (key_code < 0x44) {
+      return 0;
+  }
+  if(key_code<=0x47) key_code=key_code-0x44;
+	else if(key_code<=0x4F) key_code=key_code-0x4C+4;
+	else if(key_code<=0x57) key_code=key_code-0x54+8;
+	else if(key_code<=0x5F) key_code=key_code-0x5C+12;
+	else if(key_code<=0x67) key_code=key_code-0x64+16;
+	else if(key_code<=0x6F) key_code=key_code-0x6C+20;
+	else if(key_code<=0x77) key_code=key_code-0x74+24;
+  return key_code;
+}
+#endif
+uint8_t TM1650Display::read_byte_() {
+  uint8_t retval = 0;
+
+  this->clk_pin_->pin_mode(gpio::FLAG_OUTPUT);
+  this->dio_pin_->pin_mode(gpio::FLAG_INPUT);
+
+  for (uint8_t bit = 0; bit < 8; bit++) {
+    retval <<= 1;
+    this->clk_pin_->pin_mode(gpio::FLAG_OUTPUT);
+    this->bit_delay_();
+    if (this->dio_pin_->digital_read()) {
+      retval |= 0x01;
+    }
+    this->clk_pin_->pin_mode(gpio::FLAG_OUTPUT);
+    this->bit_delay_();
+  }
+  // Return DIO to output mode
+  // Dummy ACK
+  this->clk_pin_->pin_mode(gpio::FLAG_OUTPUT); //LOW
+  this->dio_pin_->pin_mode(gpio::FLAG_INPUT); //HIGH
+  this->bit_delay_();
+  this->clk_pin_->pin_mode(gpio::FLAG_INPUT); //LOW
+  this->bit_delay_();
+
+  uint8_t ack = this->dio_pin_->digital_read();
+
+  this->dio_pin_->pin_mode(gpio::FLAG_OUTPUT);
+
+  return retval;
+}
+
 
 void TM1650Display::dump_config() {
   ESP_LOGCONFIG(TAG, "TM1650:");

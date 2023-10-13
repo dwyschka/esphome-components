@@ -43,6 +43,11 @@ class TM1650Display : public PollingComponent {
   uint8_t strftime(uint8_t pos, const char *format, ESPTime time) __attribute__((format(strftime, 3, 0)));
   uint8_t strftime(const char *format, ESPTime time) __attribute__((format(strftime, 2, 0)));
   void display();
+#ifdef USE_BINARY_SENSOR
+  void loop() override;
+  uint8_t get_keys();
+  void add_tm1650_key(tm1650Key *tm1650_key) { this->tm1650_keys_.push_back(tm1650_key); }
+#endif
 
  protected:
   uint8_t intensity_;
@@ -60,7 +65,23 @@ class TM1650Display : public PollingComponent {
   enum ErrorCode { NONE = 0, COMMUNICATION_FAILED } error_code_{NONE};
   GPIOPin *dio_pin_;
   GPIOPin *clk_pin_;
+  #ifdef USE_BINARY_SENSOR
+  std::vector<TM1650Key *> tm1650_keys_{};
+#endif
 };
+
+#ifdef USE_BINARY_SENSOR
+class TM1650Key : public binary_sensor::BinarySensor {
+  friend class TM1650Display;
+
+ public:
+  void set_keycode(uint8_t key_code) { key_code_ = key_code; }
+  void process(uint8_t data) { this->publish_state(static_cast<bool>(data == this->key_code_)); }
+
+ protected:
+  uint8_t key_code_{0};
+};
+#endif
 
 }  // namespace tm1650
 }  // namespace esphome
