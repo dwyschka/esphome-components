@@ -15,7 +15,7 @@ const uint8_t TM1650_CMD_ADDR = 0x48;  //!< Display address command
 const uint8_t TM1650_BRT_DEF = 0x40;  //!< Display address command
 const uint8_t TM1650_DSP_8S = 0x08;  //!< Display address command
 const uint8_t TM1650_DSP_ON = 0x01;  //!< Display address command
-const uint8_t TM1650_DATA_WR_CMD = 68;  //!< Display address command
+const uint8_t TM1650_DATA_WR_CMD = 0x68;  //!< Display address command
 
 const uint8_t TM1650_ADDR_MSK = 0x03;  //!< Display address command
 
@@ -56,8 +56,8 @@ void TM1650Display::setup() {
   }
 
   this->start_();
-  this->send_byte_(0x48);
-  this->send_byte_(0xff);
+  this->send_byte_(TM1650_CMD_CTRL);
+  this->send_byte_((this.intensity_<<4) | (0x08) | (0x01));
   this->stop_();
 
   this->display();
@@ -77,7 +77,7 @@ void TM1650Display::display() {
   this->start_();
 
   for (int i = 0; i < this->length_; i++) {
-      this->send_byte_(0x68);
+      this->send_byte_(TM1650_DATA_WR_CMD);
       this->send_byte_(0x39);
     }
 
