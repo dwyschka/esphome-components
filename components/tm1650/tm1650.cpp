@@ -86,7 +86,7 @@ void TM1650Display::display() {
     if(i != 0) {
       this->send_byte_(0x34);
     } else {
-      this->send_byte_(0x34 |= 0b10000000);
+      this->send_byte_(0x34 + 0b10000000);
     }
   }
     
