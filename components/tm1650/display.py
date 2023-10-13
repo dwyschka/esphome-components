@@ -26,6 +26,9 @@ CONFIG_SCHEMA = display.BASIC_DISPLAY_SCHEMA.extend(
         cv.Optional(CONF_LENGTH, default=6): cv.All(cv.uint8_t, cv.Range(min=1, max=6)),
         cv.Required(CONF_CLK_PIN): pins.gpio_output_pin_schema,
         cv.Required(CONF_DIO_PIN): pins.gpio_output_pin_schema,
+        cv.Optional(CONF_SEGMENT_MAP, default="PABCDEFG"): cv.All(
+            cv.string, cv.Length(min=8, max=8)
+        ),
     }
 ).extend(cv.polling_component_schema("1s"))
 
