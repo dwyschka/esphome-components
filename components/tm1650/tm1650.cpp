@@ -57,7 +57,7 @@ void TM1650Display::setup() {
 
   this->start_();
   this->send_byte_(TM1650_CMD_CTRL);
-  this->send_byte_((this.intensity_<<4) | (0x08) | (0x01));
+  this->send_byte_((this->intensity_ << 4) | (0x08) | (0x01));
   this->stop_();
 
   this->display();
