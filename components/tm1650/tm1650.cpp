@@ -59,7 +59,7 @@ void TM1650Display::setup() {
 
   this->start_();
   this->send_byte_(TM1650_CMD_CTRL);
-  this->send_byte_((this->intensity_ << 4) | 0x00 | this->power_ ? TM1650_DSP_ON : TM1650_DSP_OFF);
+  this->send_byte_((this->intensity_ << 4) | 0x08 | this->power_ ? TM1650_DSP_ON : TM1650_DSP_OFF);
   this->stop_();
 
   this->display();
