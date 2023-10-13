@@ -173,6 +173,7 @@ uint8_t TM1650Display::print(uint8_t start_pos, const char *str) {
     if (*str >= ' ' && *str <= '~') {
       char_data = progmem_read_byte(&TM1650_ASCII_TO_RAW[*str - ' ']);
     }
+    ESP_LOGD(TAG, "Char %s", char_data);
 
     if (char_data == TM1650_UNKNOWN_CHAR) {
       ESP_LOGW(TAG, "Encountered character '%c' with no TM1650 representation while translating string!", *str);
