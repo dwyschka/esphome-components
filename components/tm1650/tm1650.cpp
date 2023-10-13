@@ -80,11 +80,14 @@ void TM1650Display::display() {
   // Write DATA CMND
   this->start_();
 
+/*
   for (int i = 0; i < this->length_; i++) {
     this->send_byte_(TM1650_DATA_WR_CMD + i);						// address command + address (68,6A,6C,6E)
     this->send_byte_(this->buffer_[i] + i);
   }
-
+*/
+  this->send_byte_(TM1650_DATA_WR_CMD);						// address command + address (68,6A,6C,6E)
+  this->send_byte_(0b0000);
   this->stop_();
 }
 
@@ -145,6 +148,11 @@ void TM1650Display::update() {
     (*this->writer_)(*this);
   }
   
+  this->start_();
+  this->send_byte_(TM1650_CMD_CTRL);
+  this->send_byte_((this->intensity_ << 4) | 0x08 | this->power_ ? TM1650_DSP_ON : TM1650_DSP_OFF);
+  this->stop_();
+
   this->display();
 
 }
