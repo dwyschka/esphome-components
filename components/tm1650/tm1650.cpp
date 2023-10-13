@@ -77,7 +77,7 @@ void TM1650Display::display() {
   this->start_();
 
   for (int i = 0; i < this->length_; i++) {
-      this->send_byte_(0x68 | (i << 1 ));
+      this->send_byte_(0x68);
       this->send_byte_(0b11101100);
     }
 
