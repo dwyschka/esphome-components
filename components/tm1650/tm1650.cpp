@@ -189,7 +189,6 @@ uint8_t TM1650Display::print(uint8_t start_pos, const char *str) {
 
       char_data = progmem_read_byte(&TM1650_ASCII_TO_RAW[*str - ' ']);
     }
-    ESP_LOGD(TAG, "Char %s", char_data);
 
     if (char_data == TM1650_UNKNOWN_CHAR) {
       ESP_LOGW(TAG, "Encountered character '%c' with no TM1650 representation while translating string!", *str);
@@ -200,11 +199,7 @@ uint8_t TM1650Display::print(uint8_t start_pos, const char *str) {
       char_data |= TM1650_DOT_SEGMENT;
       str++;
     }
-    uint8_t data = 0;
-
-    for (auto s = 0; s < TM1650_MAX_SEGMENTS; ++s) {
-      data |= (char_data & (1 << s)) ? this->segment_map_[s] : 0;
-    }
+    uint8_t data = chat_data;
 
     // Save to buffer
     if (pos >= this->length_) {
@@ -212,7 +207,6 @@ uint8_t TM1650Display::print(uint8_t start_pos, const char *str) {
       break;
     }
     this->buffer_[pos] = data;
-    ESP_LOGD(TAG, "Display %02X", data);
 
     pos++;
   }
