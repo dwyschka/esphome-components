@@ -140,11 +140,10 @@ void TM1650Display::update() {
 
 }
 #ifdef USE_BINARY_SENSOR
-
 void TM1650Display::loop() {
   uint8_t val = this->get_keys();
 
-  ESP_LOGD("KEYS", "Got Key %d", val)
+  ESP_LOGD("KEYS", "Got Key %d", val);
 }
 
 uint8_t TM1650Display::get_keys() {
@@ -167,6 +166,7 @@ uint8_t TM1650Display::get_keys() {
   return key_code;
 }
 #endif
+
 uint8_t TM1650Display::read_byte_() {
   uint8_t retval = 0;
 
