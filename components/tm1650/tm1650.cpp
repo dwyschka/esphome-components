@@ -85,6 +85,7 @@ void TM1650Display::display() {
       this->send_byte_(TM1650_DATA_WR_CMD);
       this->send_byte_(0x33);
             this->send_byte_(0x33);
+            this->send_byte_(0x33);
 
     }
     
