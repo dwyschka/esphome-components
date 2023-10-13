@@ -5,6 +5,10 @@
 #include "esphome/core/defines.h"
 #include "esphome/core/hal.h"
 
+#ifdef USE_BINARY_SENSOR
+#include "esphome/components/binary_sensor/binary_sensor.h"
+#endif
+
 namespace esphome {
 namespace tm1650 {
 
@@ -14,7 +18,9 @@ namespace tm1650 {
 #define TM1650_MAX_SEGMENTS  8
 
 class TM1650Display;
-
+#ifdef USE_BINARY_SENSOR
+class TM1650Key;
+#endif
 using tm1650_writer_t = std::function<void(TM1650Display &)>;
 
 class TM1650Display : public PollingComponent {
