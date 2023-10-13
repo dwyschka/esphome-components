@@ -19,6 +19,7 @@ const uint8_t TM1650_DSP_ON = 0x01;  //!< Display address command
 const uint8_t TM1650_DSP_OFF = 0x00;  //!< Display address command
 
 const uint8_t TM1650_DATA_WR_CMD = 0x68;  //!< Display address command
+const uint8_t TM1650_SW_MSK = 0x44;  //!< Display address command
 
 const uint8_t TM1650_ADDR_MSK = 0x03;  //!< Display address command
 
@@ -151,10 +152,9 @@ uint8_t TM1650Display::get_keys() {
   uint8_t key_code = read_byte_();
   this->stop_();
 
-  if (key_code < 0x44) {
-      return 0;
+  if (key_code & TM1650_SW_MSK) == TM1650_SW_MSK) {
+        ESP_LOGD("KEYS", "Got Key %d", key_code);
   }
-    ESP_LOGD("KEYS", "Got Key %d", key_code);
 
   if(key_code<=0x47) key_code=key_code-0x44;
 	else if(key_code<=0x4F) key_code=key_code-0x4C+4;
