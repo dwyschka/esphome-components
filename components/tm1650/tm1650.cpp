@@ -75,14 +75,12 @@ void TM1650Display::stop_() {
 }
 
 void TM1650Display::display() {
-    ESP_LOGD(TAG, "Display %02X%02X%02X%02X", this->buffer_[0], this->buffer_[1], this->buffer_[2], this->buffer_[3]);
-
   // Write DATA CMND
   this->start_();
 
 
-  for (int i = 0; i < this->length_; i++) {
-    this->send_byte_(TM1650_DATA_WR_CMD  | + (i+1) << 1 );						// address command + address (68,6A,6C,6E)
+  for (int i = this->length_; i > 0; i--) {
+    this->send_byte_(TM1650_DATA_WR_CMD  | i << 1 );						// address command + address (68,6A,6C,6E)
     this->send_byte_(this->buffer_[i]);
   }
 
