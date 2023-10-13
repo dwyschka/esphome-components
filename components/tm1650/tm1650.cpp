@@ -80,12 +80,9 @@ void TM1650Display::display() {
   // Write DATA CMND
   this->start_();
 
-
+  this->send_byte_(TM1650_DATA_WR_CMD);
   for (int i = 0; i < this->length_; i++) {
-      this->send_byte_(TM1650_DATA_WR_CMD);
-      this->send_byte_(0x33);
-            this->send_byte_(0x33);
-            this->send_byte_(0x33);
+      this->send_byte_(0b00001101);
 
     }
     
