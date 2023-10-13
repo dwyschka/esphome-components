@@ -56,13 +56,8 @@ void TM1650Display::setup() {
   }
 
   this->start_();
-  this->send_byte_(TM1650_CMD_ADDR);
-  
-  uint8_t settings = ((this->intensity_ & 7) << 4)
-    | ((this->mode_ & 1) << 3)
-    | ((this->power_ & (this->intensity_ ? 1 : 0)));
-
-  this->send_byte_(settings);
+  this->send_byte_(0x48);
+  this->send_byte_(0xff);
   this->stop_();
 
   this->display();
@@ -82,7 +77,7 @@ void TM1650Display::display() {
   this->start_();
 
   for (int i = 0; i < this->length_; i++) {
-      this->send_byte_(TM1650_DATA_WR_CMD | (i << 1 ));
+      this->send_byte_(0x68 | (i << 1 ));
       this->send_byte_(0x32);
     }
 
@@ -126,7 +121,7 @@ bool TM1650Display::send_byte_(uint8_t b) {
 }
 
 void TM1650Display::bit_delay_() { 
-  delayMicroseconds(1); 
+  delayMicroseconds(120); 
 }
 
 void TM1650Display::start_() {
