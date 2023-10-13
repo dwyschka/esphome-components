@@ -57,7 +57,7 @@ void TM1650Display::setup() {
 
   this->start_();
   this->send_byte_(TM1650_CMD_CTRL);
-  this->send_byte_((this->intensity_ << 4) | (0x00) | (this->power_ ? 0x01 : 0x00));
+  this->send_byte_((this->intensity_ << 4) | 0x00 | (this->power_ ? 0x01 : 0x00));
   this->stop_();
 
   this->display();
@@ -73,6 +73,8 @@ void TM1650Display::stop_() {
 }
 
 void TM1650Display::display() {
+    ESP_LOGD(TAG, "Display %02X%02X%02X%02X", buffer_[0], buffer_[1], buffer_[2], buffer_[3]);
+
   // Write DATA CMND
   this->start_();
 
