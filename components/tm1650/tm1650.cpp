@@ -15,6 +15,8 @@ const uint8_t TM1650_CMD_ADDR = 0x48;  //!< Display address command
 const uint8_t TM1650_BRT_DEF = 0x40;  //!< Display address command
 const uint8_t TM1650_DSP_8S = 0x08;  //!< Display address command
 const uint8_t TM1650_DSP_ON = 0x01;  //!< Display address command
+const uint8_t TM1650_DSP_OFF = 0x01;  //!< Display address command
+
 const uint8_t TM1650_DATA_WR_CMD = 0x68;  //!< Display address command
 
 const uint8_t TM1650_ADDR_MSK = 0x03;  //!< Display address command
@@ -57,7 +59,7 @@ void TM1650Display::setup() {
 
   this->start_();
   this->send_byte_(TM1650_CMD_CTRL);
-  this->send_byte_((this->intensity_ << 4) | 0x00 | 0x01);
+  this->send_byte_((this->intensity_ << 4) | (0x08) | (this->power_ ? TM1650_DSP_ON : TM1650_DSP_OFF));
   this->stop_();
 
   this->display();
@@ -73,17 +75,14 @@ void TM1650Display::stop_() {
 }
 
 void TM1650Display::display() {
-    ESP_LOGD(TAG, "Display %02X%02X%02X%02X", this->buffer_[0], this->buffer_[1], this->buffer_[2], this->buffer_[3]);
-
   // Write DATA CMND
   this->start_();
-
 
   for (int i = 0; i < this->length_; i++) {
       this->send_byte_(TM1650_DATA_WR_CMD);
       this->send_byte_(0x33);
     }
-    
+
   this->stop_();
 }
 
@@ -138,14 +137,14 @@ void TM1650Display::start_() {
 }
 
 void TM1650Display::update() {
-  for (uint8_t &i : this->buffer_) {
+/*  for (uint8_t &i : this->buffer_) {
     i = 0;
   }
 
   if (this->writer_.has_value()) {
     (*this->writer_)(*this);
   }
-  
+  */
   this->display();
 
 }
@@ -173,7 +172,6 @@ uint8_t TM1650Display::print(uint8_t start_pos, const char *str) {
     if (*str >= ' ' && *str <= '~') {
       char_data = progmem_read_byte(&TM1650_ASCII_TO_RAW[*str - ' ']);
     }
-    ESP_LOGD(TAG, "Char %s", char_data);
 
     if (char_data == TM1650_UNKNOWN_CHAR) {
       ESP_LOGW(TAG, "Encountered character '%c' with no TM1650 representation while translating string!", *str);
@@ -198,7 +196,6 @@ uint8_t TM1650Display::print(uint8_t start_pos, const char *str) {
       break;
     }
     this->buffer_[pos] = data;
-    ESP_LOGD(TAG, "Display %02X%02X%02X%02X", data,data,data,data);
 
     pos++;
   }
