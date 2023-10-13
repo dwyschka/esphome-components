@@ -199,7 +199,7 @@ uint8_t TM1650Display::print(uint8_t start_pos, const char *str) {
       char_data |= TM1650_DOT_SEGMENT;
       str++;
     }
-    uint8_t data = chat_data;
+    uint8_t data = char_data;
 
     // Save to buffer
     if (pos >= this->length_) {
