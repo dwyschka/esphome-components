@@ -63,12 +63,12 @@ void TM1650Display::setup() {
   this->display();
 }
 void TM1650Display::stop_() {
-  this->dio_pin_->digital_write(false);
-  this->clk_pin_->digital_write(false);
+  this->dio_pin_->pin_mode(gpio::FLAG_OUTPUT);
+  this->clk_pin_->pin_mode(gpio::FLAG_OUTPUT);
   this->bit_delay_();
   
-  this->dio_pin_->digital_write(true);
-  this->clk_pin_->digital_write(true);
+  this->dio_pin_->pin_mode(gpio::FLAG_INPUT);
+  this->clk_pin_->pin_mode(gpio::FLAG_INPUT);
   this->bit_delay_();
 }
 
@@ -87,24 +87,24 @@ void TM1650Display::display() {
 bool TM1650Display::send_byte_(uint8_t b) {
   uint8_t data = b;
   for(int i = 0; i < 8; i++) {
-      this->clk_pin_->digital_write(false);
+      this->clk_pin_->pin_mode(gpio::FLAG_OUTPUT);
       this->bit_delay_();
 
       this->dio_pin_->digital_write(data & 0x80 ? true : false);
       data = data << 1;
 
-      this->clk_pin_->digital_write(true);
+      this->clk_pin_->pin_mode(gpio::FLAG_INPUT);
       this->bit_delay_();
   }
 
   this->bit_delay_();
   this->bit_delay_();
 
-  this->clk_pin_->digital_write(false);
+  this->clk_pin_->pin_mode(gpio::FLAG_OUTPUT);
   this->dio_pin_->pin_mode(gpio::FLAG_INPUT);
 
   this->bit_delay_();
-  this->clk_pin_->digital_write(true);
+  this->clk_pin_->pin_mode(gpio::FLAG_INPUT);
 
   this->bit_delay_();
 
@@ -113,7 +113,7 @@ bool TM1650Display::send_byte_(uint8_t b) {
   ESP_LOGD(TAG, "Got Ack %d", ack);
 
   if( ack == 0 ) {
-      this->dio_pin_->digital_write(false);
+      this->dio_pin_->pin_mode(gpio::FLAG_OUTPUT);
   }
   this->dio_pin_->pin_mode(gpio::FLAG_OUTPUT);
 
@@ -125,12 +125,12 @@ void TM1650Display::bit_delay_() {
 }
 
 void TM1650Display::start_() {
-  this->dio_pin_->digital_write(true);
-  this->clk_pin_->digital_write(true);
+  this->dio_pin_->pin_mode(gpio::FLAG_INPUT);
+  this->clk_pin_->pin_mode(gpio::FLAG_INPUT);
   this->bit_delay_();
 
-  this->dio_pin_->digital_write(false);
-  this->clk_pin_->digital_write(false);
+  this->dio_pin_->pin_mode(gpio::FLAG_OUTPUT);
+  this->clk_pin_->pin_mode(gpio::FLAG_OUTPUT);
   this->bit_delay_();
 }
 
