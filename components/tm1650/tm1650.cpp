@@ -152,7 +152,7 @@ uint8_t TM1650Display::get_keys() {
   uint8_t key_code = read_byte_();
   this->stop_();
 
-  if (key_code & TM1650_SW_MSK) == TM1650_SW_MSK) {
+  if ((key_code & TM1650_SW_MSK) == TM1650_SW_MSK) {
         ESP_LOGD("KEYS", "Got Key %d", key_code);
   }
 
