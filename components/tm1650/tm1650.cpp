@@ -167,6 +167,8 @@ void TM1650Display::dump_config() {
   ESP_LOGCONFIG(TAG, "  Mode: %d", this->mode_);
   ESP_LOGCONFIG(TAG, "  Power: %d", this->power_);
   ESP_LOGCONFIG(TAG, "  Length: %d", this->length_);
+  ESP_LOGCONFIG(TAG, "  Segment Map: %s", this->segment_map_);
+
   LOG_PIN("  Data Pin: ", this->dio_pin_);
   LOG_PIN("  Clock Pin: ", this->clk_pin_);
 
