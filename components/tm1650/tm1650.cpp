@@ -80,10 +80,11 @@ void TM1650Display::display() {
 
   this->send_byte_(TM1650_DATA_WR_CMD);
 
-    for (auto b : this->buffer_) {
+  this->send_byte_(0b01101101);
+ /*   for (auto b : this->buffer_) {
       this->send_byte_(b);
     }
-
+*/
   this->stop_();
 }
 
