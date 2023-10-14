@@ -12,7 +12,7 @@ TM1650Key = tm1650_ns.class_("TM1650Key", binary_sensor.BinarySensor)
 CONFIG_SCHEMA = binary_sensor.binary_sensor_schema(TM1650Key).extend(
     {
         cv.GenerateID(CONF_TM1650_ID): cv.use_id(TM1650Display),
-        cv.Required(CONF_KEY): cv.int_range(min=0, max=15),
+        cv.Required(CONF_KEY): cv.int_range(min=0, max=255),
     }
 )
 
