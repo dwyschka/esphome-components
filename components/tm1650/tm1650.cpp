@@ -153,17 +153,9 @@ uint8_t TM1650Display::get_keys() {
   this->stop_();
 
   if ((key_code & TM1650_SW_MSK) == TM1650_SW_MSK) {
-        ESP_LOGD("KEYS", "Got Key %d", key_code);
+        return key_code;
   }
-
-  if(key_code<=0x47) key_code=key_code-0x44;
-	else if(key_code<=0x4F) key_code=key_code-0x4C+4;
-	else if(key_code<=0x57) key_code=key_code-0x54+8;
-	else if(key_code<=0x5F) key_code=key_code-0x5C+12;
-	else if(key_code<=0x67) key_code=key_code-0x64+16;
-	else if(key_code<=0x6F) key_code=key_code-0x6C+20;
-	else if(key_code<=0x77) key_code=key_code-0x74+24;
-  return key_code;
+  return 0;
 }
 #endif
 
@@ -178,7 +170,7 @@ uint8_t TM1650Display::read_byte_() {
     this->clk_pin_->pin_mode(gpio::FLAG_INPUT);
 
     this->bit_delay_();
-    
+
     if (this->dio_pin_->digital_read()) {
       retval |= 0x01;
     }
