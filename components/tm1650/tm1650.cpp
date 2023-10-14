@@ -143,6 +143,8 @@ void TM1650Display::update() {
 #ifdef USE_BINARY_SENSOR
 void TM1650Display::loop() {
   uint8_t val = this->get_keys();
+  for (auto *tm1650_key : this->tm1650_keys_)
+    tm1650_key->process(val);
 }
 
 uint8_t TM1650Display::get_keys() {
