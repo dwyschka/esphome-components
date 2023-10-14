@@ -175,8 +175,10 @@ uint8_t TM1650Display::read_byte_() {
 
   for (uint8_t bit = 0; bit < 8; bit++) {
     retval <<= 1;
-    this->clk_pin_->pin_mode(gpio::FLAG_OUTPUT);
+    this->clk_pin_->pin_mode(gpio::FLAG_INPUT);
+
     this->bit_delay_();
+    
     if (this->dio_pin_->digital_read()) {
       retval |= 0x01;
     }
