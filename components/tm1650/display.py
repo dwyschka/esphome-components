@@ -10,6 +10,7 @@ from esphome.const import (
     CONF_INTENSITY,
     CONF_LENGTH
 )
+from esphome.const import __version__ as ESPHOME_VERSION
 
 CODEOWNERS = ["@glmnet"]
 
@@ -33,7 +34,9 @@ CONFIG_SCHEMA = display.BASIC_DISPLAY_SCHEMA.extend(
 async def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
     await cg.register_component(var, config)
-    await display.register_display(var, config)
+    
+    if cv.Version.parse(ESPHOME_VERSION) < cv.Version.parse("2023.12.0"):
+        await cg.register_component(var, config)
 
     clk = await cg.gpio_pin_expression(config[CONF_CLK_PIN])
     cg.add(var.set_clk_pin(clk))

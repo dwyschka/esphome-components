@@ -23,7 +23,11 @@ class TM1650Key;
 #endif
 using tm1650_writer_t = std::function<void(TM1650Display &)>;
 
+#if ESPHOME_VERSION_CODE >= VERSION_CODE(2023, 12, 0)
+class LilygoT547Display : public PollingComponent, public display::DisplayBuffer {
+#else 
 class TM1650Display : public PollingComponent {
+#endif
  public:
 
   void set_clk_pin(GPIOPin *pin) { clk_pin_ = pin; }
